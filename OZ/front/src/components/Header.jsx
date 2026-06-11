@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
@@ -18,6 +19,8 @@ export default function Header({ onOpenAuth, onOpenHistory }) {
   const { user, logout, isLoggedIn } = useAuth();
   const { lang, setLang, t } = useLang();
 
+  const navigate = useNavigate();
+
   const ChevronDownIcon = Icons['ChevronDown'];
   const GlobeIcon = Icons['Globe'];
   const SunIcon = Icons['Sun'];
@@ -28,11 +31,11 @@ export default function Header({ onOpenAuth, onOpenHistory }) {
   const BookmarkIcon = Icons['Bookmark'];
 
   const navItems = [
-    { key: 'discover', label: t.discover },
-    { key: 'categories', label: t.categories },
-    { key: 'trending', label: t.trending },
-    { key: 'saved', label: t.saved },
-  ];
+  { key: 'discover', label: t.discover, path: '/discover' },
+  { key: 'categories', label: t.categories, path: '/categories' },
+  { key: 'trending', label: t.trending, path: '/trending' },
+  { key: 'saved', label: t.saved, path: '/saved' },
+];
 
   return (
     <motion.header
@@ -52,17 +55,18 @@ export default function Header({ onOpenAuth, onOpenHistory }) {
 
         {/* Nav */}
         <nav className="hidden items-center gap-8 md:flex">
-          {navItems.map((item, index) => (
-            <motion.span
-              key={item.key}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + index * 0.06, duration: 0.35 }}
-              className={`cursor-pointer text-sm font-medium text-[#282828]/60 dark:text-white/50 hover:text-[#282828] dark:hover:text-white transition-colors duration-200 ${t.fontClass}`}
-            >
-              {item.label}
-            </motion.span>
-          ))}
+         {navItems.map((item, index) => (
+  <motion.button
+    key={item.key}
+    initial={{ opacity: 0, y: -8 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.1 + index * 0.06, duration: 0.35 }}
+    onClick={() => navigate(item.path)}
+    className={`cursor-pointer text-sm font-medium text-[#282828]/60 dark:text-white/50 hover:text-[#282828] dark:hover:text-white transition-colors duration-200 ${t.fontClass}`}
+  >
+    {item.label}
+  </motion.button>
+))}
         </nav>
 
         <div className="flex items-center gap-2">
