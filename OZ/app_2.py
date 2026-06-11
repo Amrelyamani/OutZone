@@ -36,26 +36,25 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 # ─── DB Connection ────────────────────────────────────────────────────────────
-def get_wsl_host_ip():
-    try:
-        result = subprocess.run(
-            ["sh", "-c", "ip route | grep default | awk '{print $3}'"],
-            capture_output=True, text=True,
-        )
-        return result.stdout.strip() or "127.0.0.1"
-    except Exception:
-        return "127.0.0.1"
+mysql_host = os.environ.get("MYSQL_HOST")
 
-
-mysql_host = os.environ.get("MYSQL_HOST", get_wsl_host_ip())
 mysql_user = os.environ.get("MYSQL_USER", "root")
-mysql_password = os.environ.get("MYSQL_PASSWORD", "Amr692006")
+
+mysql_password = os.environ.get("MYSQL_PASSWORD")
+
 mysql_port = int(os.environ.get("MYSQL_PORT", 3306))
-mysql_db = os.environ.get("MYSQL_DB", "outzone_db")
+
+mysql_db = os.environ.get("MYSQL_DB", "railway")
+
+# حماية: لو الـ env ناقص
+if not mysql_host or not mysql_password:
+    raise Exception("Missing MySQL environment variables")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_db}"
 )
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
